@@ -23,7 +23,7 @@ public class ImageHandler {
 
     public BufferedImage getGrayImage() {
 
-        BufferedImage grayImage = new BufferedImage(width,height,BufferedImage.TYPE_BYTE_GRAY);
+        BufferedImage grayImage = new BufferedImage(width,height,image.getType());
 
 
         for(int i=0;i<width;i++) {
@@ -38,5 +38,73 @@ public class ImageHandler {
             }
         }
         return grayImage;
+    }
+
+    public BufferedImage duang() {
+        BufferedImage duanged = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
+        for(int i=0;i<width;i++) {
+            for(int j=0;j<height;j++) {
+                int rgb = image.getRGB(i,j);
+                int r  = (rgb&0x00ff0000) >> 16;
+                int g  = (rgb&0x0000ff00) >> 8 ;
+                int b  = (rgb&0x000000ff);
+                rgb = 0xff << 24 | r << 16 | r<<8 | r;
+                duanged.setRGB(i,j,rgb);
+            }
+        }
+        return duanged;
+    }
+
+    public BufferedImage linearConversion(BufferedImage input) {
+        double min = 0;
+        double max = 128;
+        int val;
+        BufferedImage output = new BufferedImage(input.getWidth(),input.getHeight(),input.getType());
+        for(int i=0;i<input.getWidth();i++) {
+            for(int j=0;j<input.getHeight();j++) {
+                val = input.getRGB(i,j)&0xff;
+                val = (int)((max-min)/256*val+min);
+                output.setRGB(i,j,0xff000000|val<<16|val<<8|val);
+            }
+        }
+        return output;
+    }
+
+    public BufferedImage histogramEqualization() {
+        BufferedImage grayImage = linearConversion(getGrayImage());
+
+        //统计不同灰度的像素个数
+        int[] count = new int[256];
+        for(int i=0;i<grayImage.getWidth();i++) {
+            for(int j=0;j<grayImage.getHeight();j++) {
+                count[grayImage.getRGB(i,j)&0xff]++;
+            }
+        }
+
+        double[] histogram = new double[256];
+        int N = grayImage.getHeight() * grayImage.getWidth();
+        for(int i=0;i<count.length;i++) {
+            histogram[i] = (double)count[i] / N;
+        }
+
+        //开始均衡化处理
+        for(int i=1;i<histogram.length;i++) {
+            histogram[i] += histogram[i-1];
+        }
+        System.out.println(histogram[100]);
+        System.out.println(histogram[255]);
+        //求出新的图像的灰度值
+        BufferedImage outputImage = new BufferedImage(width,height,image.getType());
+
+        int grayVal,newVal;
+        for(int i=0;i<width;i++) {
+            for(int j=0;j<height;j++) {
+                grayVal = grayImage.getRGB(i,j)&0xff;
+                newVal = (int)(histogram[grayVal]*255) & 0xff;
+                outputImage.setRGB(i,j,0xff000000|newVal<<16|newVal<<8|newVal);
+            }
+        }
+
+        return outputImage;
     }
 }

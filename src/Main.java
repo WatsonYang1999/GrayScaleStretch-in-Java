@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.PixelGrabber;
 import java.io.File;
 import java.io.IOException;
-
 import java.util.Scanner;
 public class Main {
 
@@ -17,11 +16,17 @@ public class Main {
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    ImageHandler imageHandler = new ImageHandler("./images/bradpitt.jpg");
+                    ImageHandler imageHandler = new ImageHandler("./images/self.jpg");
                     BufferedImage grayImage = imageHandler.getGrayImage();
+                    BufferedImage histEqualed = imageHandler.histogramEqualization();
+                    BufferedImage tempImage = imageHandler.linearConversion(grayImage);
                     File outputImage = new File("./images/grayImage.jpg");
+                    File histEqualedFile = new File("./images/historgramed.jpg");
+                    File tempFile = new File("./images/temp.jpg");
                     try {
                         ImageIO.write(grayImage,"jpg",outputImage);
+                        ImageIO.write(histEqualed,"jpg",histEqualedFile);
+                        ImageIO.write(tempImage,"jpg",tempFile);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

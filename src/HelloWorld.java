@@ -10,7 +10,6 @@ public class HelloWorld{
             // Read from a file
             File sourceimage = new File("./images/bradpitt.jpg");  //source.gif图片要与HelloJava.java同在一目录下
             image = ImageIO.read(sourceimage);
-
             // Read from an input stream
 //            InputStream is = new BufferedInputStream(
 //                    new FileInputStream("./images/bradpitt.jpg"));  //mid.jpg图片要与HelloJava.java同在一目录下

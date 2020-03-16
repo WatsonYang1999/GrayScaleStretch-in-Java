@@ -40,20 +40,7 @@ public class ImageHandler {
         return grayImage;
     }
 
-    public BufferedImage duang() {
-        BufferedImage duanged = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
-        for(int i=0;i<width;i++) {
-            for(int j=0;j<height;j++) {
-                int rgb = image.getRGB(i,j);
-                int r  = (rgb&0x00ff0000) >> 16;
-                int g  = (rgb&0x0000ff00) >> 8 ;
-                int b  = (rgb&0x000000ff);
-                rgb = 0xff << 24 | r << 16 | r<<8 | r;
-                duanged.setRGB(i,j,rgb);
-            }
-        }
-        return duanged;
-    }
+
 
     public BufferedImage linearConversion(BufferedImage input) {
         double min = 0;
